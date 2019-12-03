@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExampleButton.View;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,34 +14,64 @@ namespace ExampleButton.ViewModel
     public class MainViewModel : Base.ViewModelBase
     {
         #region Fields
-        public ICollectionView Items { get; private set; }
+        public ICollectionView ItemsCollectionView { get; private set; }
+        //?
         private ObservableCollection<UserViewModel> _userViewCollection = null;
         readonly string ImageDefault = $"/Image/user.png";
+        public BindingList<UserViewModel> PeopleCollection { get; set; }
+
+
+        #region Test
+        /// <summary>
+        /// Test
+        /// </summary>
+        // private SelectItemDataGridViewModel selectItem;
+        // Доступ к контролам
+        public static readonly MainWindow _main = ((MainWindow)System.Windows.Application.Current.MainWindow);
+
+        //
+        #endregion
+
 
         #endregion Fields
 
         public MainViewModel()
         {
-            UserViewCollection = LoadedProgram();
+            AddUser = new Base.RelayCommand(new Action<object>(AddUserObject));
+            DelUser = new Base.RelayCommand(new Action<object>(DelUserObject));
+
+            //UserViewCollection = LoadedProgram();
+            PeopleCollection = LoadPeopleList();
         }
 
+        BindingList<UserViewModel> LoadPeopleList()
+        {
+            BindingList<UserViewModel> temp = new BindingList<UserViewModel>
+            {
+                new UserViewModel{FirstName = "First1", LastName = "Last1", Image = ImageDefault },
+                new UserViewModel{FirstName = "Василий", LastName = "Васюков", Image = ImageDefault },
+                new UserViewModel{FirstName = "Максим", LastName = "Максюков", Image = ImageDefault },
+                new UserViewModel{FirstName = "Петр", LastName = "Петрюков", Image = ImageDefault }
+            };
+
+            ItemsCollectionView = CollectionViewSource.GetDefaultView(temp);
+
+            return temp;
+        }
 
         // Генерируем коллекцию
         ObservableCollection<UserViewModel> LoadedProgram()
         {
-            AddUser = new Base.RelayCommand(new Action<object>(AddUserObject));
-            DelUser = new Base.RelayCommand(new Action<object>(DelUserObject));
-
             ObservableCollection<UserViewModel>  temp = new ObservableCollection<UserViewModel>
             {
                 new UserViewModel{FirstName = "First1", LastName = "Last1", Image = ImageDefault },
                 new UserViewModel{FirstName = "Василий", LastName = "Васюков", Image = ImageDefault },
                 new UserViewModel{FirstName = "Максим", LastName = "Максюков", Image = ImageDefault },
-                new UserViewModel{FirstName = "Петр", LastName = "Петрюков", Image = ImageDefault },
+                new UserViewModel{FirstName = "Петр", LastName = "Петрюков", Image = ImageDefault }
             };
 
-            Items = CollectionViewSource.GetDefaultView(temp);
-
+            //ItemsCollectionView = CollectionViewSource.GetDefaultView(temp);
+            
             return temp;
         }
 
@@ -77,12 +108,14 @@ namespace ExampleButton.ViewModel
 
         public void AddUserObject(object obj)
         {
+            if(obj!=null)
             UserViewCollection.Add(new UserViewModel { Image = ImageDefault, FirstName = "", LastName = "" });
         }
 
         public void DelUserObject(object obj)
         {
-            UserViewCollection.Remove(UserViewCollection[UserViewCollection.Count - 1]);
+            if (obj != null)
+                UserViewCollection.Remove(UserViewCollection[UserViewCollection.Count - 1]);
         }
     }
 }

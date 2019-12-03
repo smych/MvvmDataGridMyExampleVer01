@@ -8,7 +8,7 @@
         
         xmlns:ViewModel="clr-namespace:ExampleButton.ViewModel"
         
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="Auto" Width="Auto">
 
     <Window.DataContext>
         <ViewModel:MainViewModel />
@@ -18,9 +18,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition  Height="Auto"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
@@ -31,7 +32,7 @@
             <Button Content="DelUser" HorizontalAlignment="Left" VerticalAlignment="Center" Width="75" Command="{Binding DelUser}" Grid.Column="1"/>
         </Grid>
 
-        <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" Grid.Row="1">
+        <DataGrid x:Name="dgDataGrid" ItemsSource="{Binding ItemsCollectionView}" AutoGenerateColumns="False" Grid.Row="1" Margin="10">
             <DataGrid.Columns>
 
                 <DataGridTemplateColumn Header="Фото" Width="SizeToCells" IsReadOnly="True">
@@ -49,6 +50,53 @@
             </DataGrid.Columns>
         </DataGrid>
         
-        
-    </Grid>
+        <!-- Отоброжение иконками -->
+        <Grid Grid.Row="2">
+            <ScrollViewer Grid.Column="1" Grid.Row="1" Background="#FFF1F1F1">
+                <StackPanel>
+                    
+                    <TextBlock Text="!Items:" Margin="10" FontSize="22" FontWeight="Medium" />
+                    
+                    <StackPanel Margin="20 0">
+                        <ItemsControl x:Name="ListViewProducts" ItemsSource="{Binding ItemsCollectionView}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="10" Width="110" Height="160">
+                                        <StackPanel>
+                                            
+                                            <!-- Поле №1 -->
+                                            <Border Width="100" Height="100" CornerRadius="5" Margin="5">
+                                                <Border.Effect>
+                                                    <DropShadowEffect ShadowDepth="1"/>
+                                                </Border.Effect>
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding Image}"/>
+                                                </Border.Background>
+                                            </Border>
+                                            
+                                            <!-- Поле №2 -->
+                                            <TextBlock Margin="5" Text="{Binding FirstName}" FontSize="17" FontFamily="Franklin Gothic Medium"/>
+                                            
+                                            <!-- Поле №3 -->
+                                            <TextBlock Margin="5 0" Text="{Binding LastName}" FontSize="15"/>
+
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                        </ItemsControl>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+
+        </Grid>
 </Window>
