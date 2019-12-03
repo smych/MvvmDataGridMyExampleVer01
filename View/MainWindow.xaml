@@ -8,7 +8,7 @@
         
         xmlns:ViewModel="clr-namespace:ExampleButton.ViewModel"
         
-        Title="MainWindow" Height="Auto" Width="Auto">
+        Title="Список" Height="Auto" Width="Auto">
 
     <Window.DataContext>
         <ViewModel:MainViewModel />
@@ -58,7 +58,7 @@
                     <TextBlock Text="!Items:" Margin="10" FontSize="22" FontWeight="Medium" />
                     
                     <StackPanel Margin="20 0">
-                        <ItemsControl x:Name="ListViewProducts" ItemsSource="{Binding ItemsCollectionView}">
+                        <ItemsControl ItemsSource="{Binding ItemsCollectionView}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="10" Width="110" Height="160">
@@ -86,8 +86,8 @@
                             </ItemsControl.ItemTemplate>
 
                             <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel/>
+                                <ItemsPanelTemplate >
+                                    <WrapPanel />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
 

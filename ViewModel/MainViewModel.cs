@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -42,6 +43,23 @@ namespace ExampleButton.ViewModel
 
             //UserViewCollection = LoadedProgram();
             PeopleCollection = LoadPeopleList();
+            PeopleCollection.ListChanged += PeopleCollection_ListChanged;
+        }
+
+        private void PeopleCollection_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted || e.ListChangedType == ListChangedType.ItemChanged)
+            {
+                try
+                {
+                    MessageBox.Show(string.Format($"{sender}"));
+                }
+                catch (Exception obj)
+                {
+                    MessageBox.Show(obj.Message);
+                    return;
+                }
+            }
         }
 
         BindingList<UserViewModel> LoadPeopleList()
@@ -54,6 +72,7 @@ namespace ExampleButton.ViewModel
                 new UserViewModel{FirstName = "Петр", LastName = "Петрюков", Image = ImageDefault }
             };
 
+            //
             ItemsCollectionView = CollectionViewSource.GetDefaultView(temp);
 
             return temp;
@@ -117,5 +136,7 @@ namespace ExampleButton.ViewModel
             if (obj != null)
                 UserViewCollection.Remove(UserViewCollection[UserViewCollection.Count - 1]);
         }
+
+
     }
 }
