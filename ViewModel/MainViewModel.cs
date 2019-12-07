@@ -1,52 +1,147 @@
-﻿using ExampleButton.View;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
+using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using ExampleButton.Model;
+using ExampleButton.View;
+using ExampleButton.ViewModel.Base;
 
 namespace ExampleButton.ViewModel
 {
-    public class MainViewModel : Base.ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
         #region Fields
-        public ICollectionView ItemsCollectionView { get; private set; }
-        //?
-        private ObservableCollection<UserViewModel> _userViewCollection = null;
+        public ICollectionView usersCollectionView { get; private set; }
+        //private BindingList<User> _usersCollection;
+        private BindingList<GroupUser> _rootGroupList = null;
         readonly string ImageDefault = $"/Image/user.png";
-        public BindingList<UserViewModel> PeopleCollection { get; set; }
-
-
-        #region Test
-        /// <summary>
-        /// Test
-        /// </summary>
-        // private SelectItemDataGridViewModel selectItem;
-        // Доступ к контролам
-        public static readonly MainWindow _main = ((MainWindow)System.Windows.Application.Current.MainWindow);
-
-        //
-        #endregion
-
-
         #endregion Fields
 
         public MainViewModel()
         {
-            AddUser = new Base.RelayCommand(new Action<object>(AddUserObject));
-            DelUser = new Base.RelayCommand(new Action<object>(DelUserObject));
-
-            //UserViewCollection = LoadedProgram();
-            PeopleCollection = LoadPeopleList();
-            PeopleCollection.ListChanged += PeopleCollection_ListChanged;
+            _rootGroupList = new BindingList<GroupUser>();
+            _rootGroupList = LoadProgram();
+            RootGropsList.ListChanged += GroupList_ListChanged;
+            //PeopleCollection.ListChanged += PeopleCollection_ListChanged;
         }
 
-        private void PeopleCollection_ListChanged(object sender, ListChangedEventArgs e)
+        BindingList<GroupUser> LoadProgram()
+        {
+            //users
+
+            BindingList<User> users1 = new BindingList<User>
+            {
+                new User { FirstName = "boss1", LastName ="LastBoss1", Image = ImageDefault},
+                new User { FirstName = "boss2", LastName ="LastBoss2", Image = ImageDefault},
+                new User { FirstName = "boss3", LastName ="LastBoss3", Image = ImageDefault}
+            };
+
+            users1.ListChanged += Users_ListChanged;
+
+            BindingList<User> users2 = new BindingList<User>
+            {
+                new User { FirstName = "Производство1", LastName ="LastПроизводство1", Image = ImageDefault},
+                new User { FirstName = "Производство2", LastName ="LastПроизводство2", Image = ImageDefault},
+                new User { FirstName = "Производство3", LastName ="LastПроизводство3", Image = ImageDefault}
+            };
+
+            users2.ListChanged += Users_ListChanged;
+
+            BindingList<User> users3 = new BindingList<User>
+            {
+                new User { FirstName = "Вышивка1", LastName ="LastВышивка1", Image = ImageDefault},
+                new User { FirstName = "Вышивка2", LastName ="LastВышивка2", Image = ImageDefault},
+                new User { FirstName = "Вышивка3", LastName ="LastВышивка3", Image = ImageDefault},
+            };
+
+            users3.ListChanged += Users_ListChanged;
+
+            BindingList<User> users4 = new BindingList<User>
+            {
+                new User { FirstName = "Продажник1", LastName ="LastПродажник1", Image = ImageDefault},
+                new User { FirstName = "Продажник2", LastName ="LastПродажник2", Image = ImageDefault},
+                new User { FirstName = "Продажник3", LastName ="LastПродажник3", Image = ImageDefault}
+            };
+
+            users4.ListChanged += Users_ListChanged;
+
+            BindingList<User> users5 = new BindingList<User>
+            {
+                new User { FirstName = "support1", LastName ="Lastsupport1", Image = ImageDefault},
+                new User { FirstName = "support2", LastName ="Lastsupport2", Image = ImageDefault}
+            };
+
+            users5.ListChanged += Users_ListChanged;
+
+            BindingList<User> users6 = new BindingList<User>
+            {
+                new User { FirstName = "buh1", LastName ="Lastbuh1", Image = ImageDefault},
+                new User { FirstName = "buh2", LastName ="Lastbuh2", Image = ImageDefault}
+            };
+
+            users6.ListChanged += Users_ListChanged;
+            //
+
+            GroupUser Group1 = new GroupUser
+            { NameGroup = "Босс", ChildrenUsers = users1 };
+
+            GroupUser Group2 = new GroupUser
+            { NameGroup = "Производство", ChildrenUsers = users2 };
+
+            GroupUser Group3 = new GroupUser
+            { NameGroup = "Вышивка", ChildrenUsers = users3 };
+
+            GroupUser Group4 = new GroupUser
+            { NameGroup = "Sales", ChildrenUsers = users4 };
+
+            GroupUser Group5 = new GroupUser
+            { NameGroup = "Buh", ChildrenUsers = users6 };
+
+            GroupUser Group6 = new GroupUser
+            { NameGroup = "It", ChildrenUsers = users5 };
+
+            // Списки
+            BindingList<GroupUser> gp0 = new BindingList<GroupUser>();
+            BindingList<GroupUser> gp1 = new BindingList<GroupUser>();
+            BindingList<GroupUser> gproot = new BindingList<GroupUser>();
+
+            //Боссы
+            gp0.Add(Group6);
+            gp0.Add(Group5);
+            gp0.Add(Group4);
+
+            Group1.ChildrenGroups = gp0;
+
+            //Производство
+            gp1.Add(Group3);
+
+            Group2.ChildrenGroups = gp1;
+
+            //Root
+            gproot.Add(Group1);
+            gproot.Add(Group2);
+
+            return gproot;
+        }
+
+        private void Users_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public BindingList<GroupUser> RootGropsList 
+        {
+            get { return _rootGroupList; } 
+        }
+
+        //Метод обработки события
+        private void GroupList_ListChanged(object sender, ListChangedEventArgs e)
         {
             if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted || e.ListChangedType == ListChangedType.ItemChanged)
             {
@@ -62,81 +157,90 @@ namespace ExampleButton.ViewModel
             }
         }
 
-        BindingList<UserViewModel> LoadPeopleList()
+        // Свойство возвращает выбранную позицыю из списка Groups
+
+        private GroupUser _selectedGroup;
+        public GroupUser SelectedGroup
         {
-            BindingList<UserViewModel> temp = new BindingList<UserViewModel>
-            {
-                new UserViewModel{FirstName = "First1", LastName = "Last1", Image = ImageDefault },
-                new UserViewModel{FirstName = "Василий", LastName = "Васюков", Image = ImageDefault },
-                new UserViewModel{FirstName = "Максим", LastName = "Максюков", Image = ImageDefault },
-                new UserViewModel{FirstName = "Петр", LastName = "Петрюков", Image = ImageDefault }
-            };
-
-            //
-            ItemsCollectionView = CollectionViewSource.GetDefaultView(temp);
-
-            return temp;
-        }
-
-        // Генерируем коллекцию
-        ObservableCollection<UserViewModel> LoadedProgram()
-        {
-            ObservableCollection<UserViewModel>  temp = new ObservableCollection<UserViewModel>
-            {
-                new UserViewModel{FirstName = "First1", LastName = "Last1", Image = ImageDefault },
-                new UserViewModel{FirstName = "Василий", LastName = "Васюков", Image = ImageDefault },
-                new UserViewModel{FirstName = "Максим", LastName = "Максюков", Image = ImageDefault },
-                new UserViewModel{FirstName = "Петр", LastName = "Петрюков", Image = ImageDefault }
-            };
-
-            //ItemsCollectionView = CollectionViewSource.GetDefaultView(temp);
-            
-            return temp;
-        }
-
-        public ObservableCollection<UserViewModel> UserViewCollection
-        {
-            get
-            {
-                return _userViewCollection;
-            }
+            get { return _selectedGroup; }
             set
             {
-                if (_userViewCollection != value)
-                {
-                    _userViewCollection = value;
-                    RaisePropertyChanged(() => UserViewCollection);
-                }
+                _selectedGroup = value;
+                RaisePropertyChanged(() => SelectedGroup);
             }
         }
 
-        private ICommand m_addUser;
-        private ICommand m_delUser;
+        #region Command
 
-        public ICommand AddUser
-        {
-            get { return m_addUser; }
-            set { m_addUser = value; }
-        }
+        //// команда добавления нового объекта
+        //private RelayCommand _adduser;
+        //public RelayCommand AddUser
+        //{
+        //    get
+        //    {
+        //        return _adduser ??
+        //          (_adduser = new RelayCommand(obj =>
+        //          {
+        //              UserViewModel temp = new UserViewModel() { FirstName = "Blank", LastName = "Blank", Image = ImageDefault };
+        //              PeopleCollection.Add(temp);
+        //              SelectedUser = temp;
 
-        public ICommand DelUser
-        {
-            get { return m_delUser; }
-            set { m_delUser = value; }
-        }
+        //              //Model.Phone phone = new Model.Phone();
+        //              //Phones.Insert(0, phone);
+        //              //SelectedPhone = phone;
+        //          }));
+        //    }
+        //}
 
-        public void AddUserObject(object obj)
-        {
-            if(obj!=null)
-            UserViewCollection.Add(new UserViewModel { Image = ImageDefault, FirstName = "", LastName = "" });
-        }
+        //// команда добавления нового объекта
+        //private RelayCommand _deliteUser;
+        //public RelayCommand DeliteUser
+        //{
+        //    get
+        //    {
+        //        return _deliteUser ??
+        //          (_deliteUser = new RelayCommand(obj =>
+        //          {
+        //              UserViewModel temp = obj as UserViewModel;
+        //              if (temp != null)
+        //              {
+        //                  PeopleCollection.Remove(temp);
+        //              }
 
-        public void DelUserObject(object obj)
-        {
-            if (obj != null)
-                UserViewCollection.Remove(UserViewCollection[UserViewCollection.Count - 1]);
-        }
+        //          },
+        //            (obj) => PeopleCollection.Count > 0));    
 
+        //    }
+        //}
+
+        //// Отображение DataGrid
+        //private RelayCommand _dgView;
+        //public RelayCommand DGView
+        //{
+        //    get
+        //    {
+        //        return _dgView ??
+        //          (_dgView = new RelayCommand(obj =>
+        //          {
+
+        //          }));
+        //    }
+        //}
+
+        //// Отображение DataGrid
+        //private RelayCommand _lbView;
+        //public RelayCommand LBView
+        //{
+        //    get
+        //    {
+        //        return _adduser ??
+        //          (_adduser = new RelayCommand(obj =>
+        //          {
+
+        //          }));
+        //    }
+        //}
+        #endregion
 
     }
 }

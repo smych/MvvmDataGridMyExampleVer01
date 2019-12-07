@@ -7,96 +7,61 @@
         mc:Ignorable="d"
         
         xmlns:ViewModel="clr-namespace:ExampleButton.ViewModel"
+        xmlns:View="clr-namespace:ExampleButton.View"
+        xmlns:Model ="clr-namespace:ExampleButton.Model"
         
-        Title="Список" Height="Auto" Width="Auto">
+        Title="Список" Height="450" Width="800">
 
     <Window.DataContext>
         <ViewModel:MainViewModel />
     </Window.DataContext>
     
+    <Window.Resources>
+        <DataTemplate x:Name="DataGridViewModel" DataType="{x:Type ViewModel:DataGridViewModel}">
+            <View:DataGridView DataContext="{Binding}"/>
+        </DataTemplate>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition  Height="Auto"/>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-                
-            <Button Content="AddUser" HorizontalAlignment="Left" VerticalAlignment="Center" Width="75" Command="{Binding AddUser}"/>
-            <Button Content="DelUser" HorizontalAlignment="Left" VerticalAlignment="Center" Width="75" Command="{Binding DelUser}" Grid.Column="1"/>
-        </Grid>
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="10" Height="Auto" Orientation="Horizontal">
+            <Button Content="AddUser" Width="75" Command="{Binding AddUser}" Margin="5"/>
+            <Button Content="DelUser" Width="75" Command="{Binding DeliteUser}" Margin="5" />
+            <Button Content="DataGrid" Width="75" Command="{Binding DGView}" Margin="5" />
+            <Button Content="ListBox" Width="75" Command="{Binding LBView}" Margin="5" />
+        </StackPanel>
 
-        <DataGrid x:Name="dgDataGrid" ItemsSource="{Binding ItemsCollectionView}" AutoGenerateColumns="False" Grid.Row="1" Margin="10">
-            <DataGrid.Columns>
-
-                <DataGridTemplateColumn Header="Фото" Width="SizeToCells" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Height="80" Source="{Binding Image}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" />
-                
-                <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" />
-                
-            </DataGrid.Columns>
-        </DataGrid>
-        
-        <!-- Отоброжение иконками -->
-        <Grid Grid.Row="2">
-            <ScrollViewer Grid.Column="1" Grid.Row="1" Background="#FFF1F1F1">
-                <StackPanel>
-                    
-                    <TextBlock Text="!Items:" Margin="10" FontSize="22" FontWeight="Medium" />
-                    
-                    <StackPanel Margin="20 0">
-                        <ItemsControl ItemsSource="{Binding ItemsCollectionView}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Margin="10" Width="110" Height="160">
-                                        <StackPanel>
-                                            
-                                            <!-- Поле №1 -->
-                                            <Border Width="100" Height="100" CornerRadius="5" Margin="5">
-                                                <Border.Effect>
-                                                    <DropShadowEffect ShadowDepth="1"/>
-                                                </Border.Effect>
-                                                <Border.Background>
-                                                    <ImageBrush ImageSource="{Binding Image}"/>
-                                                </Border.Background>
-                                            </Border>
-                                            
-                                            <!-- Поле №2 -->
-                                            <TextBlock Margin="5" Text="{Binding FirstName}" FontSize="17" FontFamily="Franklin Gothic Medium"/>
-                                            
-                                            <!-- Поле №3 -->
-                                            <TextBlock Margin="5 0" Text="{Binding LastName}" FontSize="15"/>
-
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate >
-                                    <WrapPanel />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-
-                        </ItemsControl>
+        <TreeView Grid.Row="1" Grid.Column="0"
+                  ItemsSource="{Binding RootGropsList}">
+            
+            <TreeView.ItemTemplate >
+                <HierarchicalDataTemplate ItemsSource="{Binding ChildrenGroups}">
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <Border Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source = "/Image/FolderClouse.png" Height="30" Margin="2"/>
+                                <TextBlock Text="{Binding NameGroup}" VerticalAlignment="Center" Margin="4" Width="Auto" />
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
 
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
 
-        </Grid>
+    </Grid>
 </Window>
