@@ -15,12 +15,16 @@
     <Window.DataContext>
         <ViewModel:MainViewModel />
     </Window.DataContext>
-    
+
+    <!--
     <Window.Resources>
+        
         <DataTemplate x:Name="DataGridViewModel" DataType="{x:Type ViewModel:DataGridViewModel}">
             <View:DataGridView DataContext="{Binding}"/>
         </DataTemplate>
+            
     </Window.Resources>
+    -->
 
     <Grid>
         <Grid.RowDefinitions>
@@ -40,9 +44,9 @@
         </StackPanel>
 
         <TreeView Grid.Row="1" Grid.Column="0"
-                  ItemsSource="{Binding RootGropsList}">
+                  ItemsSource="{Binding RootGropsList}" >
             
-            <TreeView.ItemTemplate >
+            <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding ChildrenGroups}">
                     <StackPanel Orientation="Horizontal" Margin="2">
                         <Border Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="1">
@@ -56,8 +60,9 @@
             </TreeView.ItemTemplate>
 
             <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                <Style TargetType="{x:Type TreeViewItem}" >
+                    <Setter Property="Selector.SelectedItem" Value="{Binding SelectedGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Style>
             </TreeView.ItemContainerStyle>
